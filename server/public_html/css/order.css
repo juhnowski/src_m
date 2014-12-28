@@ -1,0 +1,26 @@
+body {
+    font-size: 24px;
+    background-color: #ffffff;
+    margin: 50px;
+}
+
+p{
+    line-height: 0.1;
+}
+   
+.order-text {
+    font-size: 20px;
+}
+
+.order-comments {
+    font-size: 14px;    
+}
+
+thead {
+    background-color: #afcb1f;
+    font-size: 20px;
+}
+
+.odd {
+    background-color: #dfe38c;
+}

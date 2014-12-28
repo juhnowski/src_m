@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Пример</title>
+    <meta charset="utf-8">
+    <script src="jquery-2.0.3.min.js"></script>
+    <script src="jquery.tmpl.js" type="text/javascript"></script>
+    
+<script type="text/javascript">
+    $(document).ready(function() {
+        var data = new Array();
+        data[data.length] = { name: "фио", product: "order", stocklevel: "+79027800807", price: 123456789};
+        data[data.length] = { name: "Астры", product: "astor", stocklevel: "10", price: 2.99};
+        data[data.length] = { name: "Нарциссы", product: "daffodil", stocklevel: "12", price: 1.99};
+        data[data.length] = { name: "Розы", product: "rose", stocklevel: "2", price: 4.99};
+        data[data.length] = { name: "Пионы", product: "peony", stocklevel: "0", price: 1.50};
+        data[data.length] = { name: "Примулы", product: "primula", stocklevel: "1", price: 3.12};
+        data[data.length] = { name: "Подснежники", product: "snowdrop", stocklevel: "15", price: 0.99};
+                
+        var templResult = $('#orderTmpl').tmpl(data);
+        templResult.appendTo('#row_name');
+        templResult.appendTo("#row_cnt");
+    });
+</script>
+                    
+<script id="orderTmpl" type="text/x-jquery-tmpl">
+    <div class="dcel1">
+        <label for="${product}">${name}:</label>
+        <input name="${product}" value="${name}|${stocklevel}|${price}" required/>
+    </div>
+    
+</script>
+</head>
+<body>
+    <h1>Цветочный магазин Джеки</h1>
+    <form method="post" action = "http://interactivefishing.tv:9080/order">
+        <div id="oblock">
+            <div class="dtable">
+                <div id="row_name" class="drow"></div>
+                <div id="row_cnt" class="drow"></div>
+            </div>
+        </div>
+        <div id="buttonDiv">
+            <button type="submit">Заказать</button>
+        </div>
+    </form>
+</body>
+</html>

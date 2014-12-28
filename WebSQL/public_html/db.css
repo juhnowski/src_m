@@ -1,0 +1,27 @@
+.status {
+    background-color: activecaption;
+    font-family: cursive;
+    font-size: xx-small;
+    color: darkblue;
+    width: 100%;
+}
+
+.workarea {
+    background-color: appworkspace
+}
+
+.msg-ERR {
+    color:red;
+}
+
+.msg-OK {
+    color:green;
+}
+
+.msg {
+    color:black;
+}
+
+.msg-DEBUG {
+    color:darkorchid;
+}

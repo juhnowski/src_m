@@ -1,0 +1,41 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="jquery-2.0.3.min.js"></script>
+        <link rel="stylesheet" href="db.css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div class="status">Test<br></div>
+        <script>
+            function forEach(data, callback) {
+                for(var key in data) {
+                    alert(key);
+                    if(data.hasOwnProperty(key)){
+                        callback(key,data[key]);
+                    }
+                }
+            }
+            
+           var data=[{"КодТовара":"1","Товар":"001 Биогумус 10 кг","Масса":"10","КоличествоВКоробке":"1","ОстатокНаСкладе":"2000","Сортировка":"1","Переход":"18","ГруппаТовара":"1","КоличествоБонусаТоварного":"","ПроцентБонусаТоварного":"","ID_Поставщик":"6","ЦенаЗакупки":"1","НачальныйОстаток":"7254","ПРОБА":"?","Факт1":"8720","Свободный1":"5794","Инвентура":"9574","Факт2":"8720","Свободный2":"5794"},
+              {"КодТовара":"2","Товар":"              Грунты и удобрения","Масса":"","КоличествоВКоробке":"","ОстатокНаСкладе":"","Сортировка":"","Переход":"","ГруппаТовара":"","КоличествоБонусаТоварного":"","ПроцентБонусаТоварного":"","ID_Поставщик":"","ЦенаЗакупки":"","НачальныйОстаток":"","ПРОБА":"","Факт1":"","Свободный1":"","Инвентура":"","Факт2":"","Свободный2":""}];
+
+              $.each(data,function(index,value){
+                  $.each(value,function(key,value1) {
+                      alert(index1+":"+value1);
+                  });
+                 //alert(index+":"+value);
+              });
+
+/*            forEach(data1, function(key,value){
+             alert(key+":"+value.toString()); //$(key+":"+value+"<br>").appendTo(".status");
+            });
+*/
+        </script>
+    </body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="jquery-2.0.3.min.js"></script>        
+    </head>
+    <body>
+        <div id="res"></div>
+        <script>
+            var s = "p1|p2|p3|p4" 
+            parseOrdersProduct = function(s,str) {
+               str+="<tr>";
+               var sp=s.split("|");
+               for(var i=0; i<sp.length; i++) {
+                   if (sp[i]!=="|") {
+                      str+="<td>"+sp[i]+"</td>";
+                   }
+               }
+               str+="</tr>";
+               return str;
+            };
+            $("<table>"+parseOrdersProduct(s)+"</table>").appendTo("#res");
+            
+        </script>
+        
+    </body>
+</html>

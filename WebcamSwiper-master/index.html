@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Мастерграунд</title>
+	<meta charset="utf-8">
+        <link href="css/le-frog/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" media="all" href="masterground.css" />        
+        <link rel="stylesheet" href="db.css" />
+        <script src="jquery-2.0.3.min.js"></script>
+        <script src="jquery-ui.js"></script>
+        <script src="jquery.tmpl.js" type="text/javascript"></script>
+        <script src="db.js" type="text/javascript"></script>
+        <script src="js/jquery.zoomooz.min.js"></script>
+        <script src="js/initzoom.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+        <script src='jquery.cookie.js'></script>
+        <script src="user.js" type="text/javascript"></script>
+        <script src="db.js" type="text/javascript"></script>
+        <style>
+            .toggler { height: 100%; position: absolute; top:0; left: 0; padding: 0.4em;}
+            #button { padding: .5em 1em; text-decoration: none; }
+            #effect { width: 240px; height: 100%; position: absolute; }
+            #effect h3 { margin: 0; padding: 0.4em; text-align: center; }
+            .ui-effects-transfer { border: 2px dotted gray; }
+            #draggable { width: 100px; height: 100px; padding: 0.5em; float: left; margin: 10px 10px 10px 0; }
+            #droppable { width: 150px; height: 150px; padding: 0.5em; float: left; margin: 10px; }
+        </style>
+        <style>
+            label {
+                display: inline-block;
+                width: 3em;
+            }
+        </style>
+        <style>
+            #progressbar .ui-progressbar-value {
+                background-color: #ccc;
+            }
+        </style>
+  <script>
+  $(function() {
+  //  $( "#resizable" ).resizable();
+       $( "#progressbar" ).progressbar({
+      value: false
+    });
+  });
+  </script>        
+<script>
+
+    function runEffect() {
+      var selectedEffect = $( "#effectTypes" ).val();
+      if (selectedEffect==="drop") {
+          selectedEffect="slide";
+      } else {
+          selectedEffect="drop";
+      }
+      $( "#effectTypes" ).val(selectedEffect);
+      var options = {};
+      $( "#effect" ).effect( selectedEffect, options, 500, callback );
+    };
+ 
+    function callback() {
+      var selectedEffect = $( "#effectTypes" ).val();
+      if (selectedEffect==="drop") {
+         $('#korzina').show();
+      }else{
+         $('#korzina').hide(); 
+      }
+      
+    };
+ 
+ $(function(){
+
+    $( "#button" ).click(function() {
+      runEffect();
+      return false;
+    });
+    
+    runEffect();
+
+    $( ".instructions" ).fadeIn( 2000 ).delay( 2000 ).slideUp();
+    
+ })
+ 
+     $( "#draggable" ).draggable();
+    $( "#droppable" ).droppable({
+      drop: function( event, ui ) {
+        $( this )
+          .addClass( "ui-state-highlight" )
+          .find( "p" )
+            .html( "Dropped!" );
+      }
+    });
+    
+    $( ".column" ).sortable({
+      connectWith: ".column"
+    });
+ 
+    $( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+      .find( ".portlet-content" );
+ 
+    $( ".portlet-header .ui-icon" ).click(function() {
+      $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+      $( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+    });
+ 
+    $( ".column" ).disableSelection();
+    $(".splash-screen").hide();
+  </script>      
+
+  <style>
+  .column { width: 170px; float: left; padding-bottom: 100px; }
+  .portlet { margin: 0 1em 1em 0; }
+  .portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+  .portlet-header .ui-icon { float: right; }
+  .portlet-content { padding: 0.4em; }
+  .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+  .ui-sortable-placeholder * { visibility: hidden; }
+  </style>
+
+  <script id="dataTmpl" type="text/x-jquery-tmpl">
+      
+  </script>
+
+  <script type="text/javascript">
+      $(document).ready(function() {
+          $('<button class="ui-state-default ui-corner-all">Обновить</button>').appendTo(".instructions")
+                  .click(function(e){
+          $.get("mydata.json", function(data) {
+              
+          });
+          });
+          
+          $('<button class="ui-state-default ui-corner-all">CreateOrderNumber</button>').appendTo(".instructions")
+                  .click(function(e){
+                      alert(phreebie.CreateOrderNumber($('#user-name-third').val(),$('#user-name-first').val(),$('#user-name-second').val(),$('#user-name-email').val()));
+                  });
+          
+      });
+</script>
+
+</head>
+<body>
+   
+    <div id="korzina" title="Корзина покупок">
+        <img id="korzina-button" alt="Корзина покупок" src="images/korzina.gif">
+        <img id="Out" alt="Удалить" src="images/zoomout.png"/>
+        <img id="In" alt="Приблизить" src="images/zoomin.png"/>
+    </div>
+    
+    <div class="instructions">
+            <a id="webmsg">Направьте камеру на себя и листайте каталог движением руки влево/вправо.</a>
+    <div class='splash-screen'>
+        <div id="splash-screen-logo"><img alt="Master Ground" src="images/hex0.jpg"></div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>               
+	</div>
+
+    <div class="content">
+            
+            <span class="control left">&lt;</span>
+		<div class="book">
+			<div class="one page">
+				<div class="pageContents">
+                                    <img alt="стр.1" src="catalog/Image_001.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="two page">
+				<div class="pageContents">
+                                    <img alt="стр.2" src="catalog/Image_002.png" width="400" height="600">
+				</div>
+			</div>
+                    <div class="three page">
+				<div class="pageContents">
+                                    <img alt="стр.3" src="catalog/Image_003.png"  width="400" height="600">
+				</div>
+			</div>
+			<div class="four page">
+				<div class="pageContents">
+                                    <img alt="стр.4" alt="Image_004.png" src="catalog/Image_004.png" usemap="#p4Map" width="400" height="600" />
+    <map name="p4Map" id="p4Map">
+        <area shape="rect" coords="21,402,370,416" class="product" data-pname="001 Удобрение БИОГУМОС, 10кг." data-pcol="1" data-pid="1" data-size="мешков, 10кг." title="Заказать Удобрение БИОГУМОС"/>
+        <area shape="rect" coords="21,417,370,432" class="product" data-pname="003 Почвообразователь ТЕРРАГУМУС, 10кг." data-pcol="1" data-pid="260" data-size="мешков, 10кг." title="Заказать Почвообразователь ТЕРРАГУМУС"/>
+        <area shape="rect" coords="60,441,101,565" class="product" data-pname="001 Удобрение БИОГУМОС, 10кг." data-pcol="1" data-pid="1" data-size="мешков, 10кг." title="Заказать Удобрение БИОГУМОС"/>
+    </map>
+				</div>
+			</div>
+			<div class="five page">
+				<div class="pageContents">
+                                    <img alt="стр.5" src="catalog/Image_005.png" usemap="#p5Map" width="400" height="600">
+                                    <map name="p5Map" id="p5Map">
+    <area shape="rect" coords="60,441,101,565" class="product" data-pname="003 Почвообразователь ТЕРРАГУМУС, 10кг." data-pcol="1" data-pid="260" data-size="мешков, 10кг." title="Заказать ТЕРРАГУМУС"/>                            
+                                    </map>
+				</div>
+			</div>
+			<div class="six page">
+				<div class="pageContents">
+                                    <img alt="стр.6" src="catalog/Image_006.png" usemap="#p6Map" width="400" height="600">
+                                        <map name="p6Map" id="p6Map">
+        <area shape="rect" coords="31,440,197,450" class="product" data-pname="1200 Универсальный грунт для цветов, 20л." data-pcol="1" data-pid="34" data-size="мешков, 20л." title="Заказать Универсальный грунт для цветов, 20л."/>
+        <area shape="rect" coords="31,450,197,567" class="product" data-pname="1500 Универсальный грунт для цветов, 50л." data-pcol="1" data-pid="35" data-size="мешков, 20л." title="Заказать Универсальный грунт для цветов, 50л."/>
+        <area shape="rect" coords="206,440,375,567" class="product" data-pname="1025 Грунт для декоративнолистных, 10л." data-pcol="1" data-pid="94" data-size="мешков, 10л." title="Заказать Грунт для декоративнолистных" />
+    </map>
+				</div>
+			</div>
+			<div class="seven page">
+				<div class="pageContents">
+                                    <img alt="стр.7" src="catalog/Image_007.png" usemap="#p7Map" width="400" height="600">
+    <map name="p7Map" id="p7Map">
+        <area shape="rect" coords="25,28,195,158" class="product" data-pname="1035 Грунт для орхидей, 5л." data-pcol="1" data-pid="314" data-size="мешков, 5л." title="Заказать Грунт для орхидей, 5л." />
+        <area shape="rect" coords="25,166,195,295" class="product" data-pname="1285 Грунт для посева семян и выгонки рассады, 20л." data-pcol="1" data-pid="28" data-size="мешков, 20л." title="Заказать Грунт для посева семян и выгонки рассады, 20л." />
+        <area shape="rect" coords="25,302,195,431" class="product" data-pname="1540 Грунт для рододендронов, 50л." data-pcol="1" data-pid="37" data-size="мешков, 50л." title="Заказать Грунт для рододендронов, 50л." />
+        <area shape="rect" coords="25,439,195,568" class="product" data-pname="1560 Грунт для герани и балконных цветов, 50л." data-pcol="1" data-pid="38" data-size="мешков, 50л." title="Заказать Грунт для герани и балконных цветов, 50л." />
+        <area shape="rect" coords="201,28,370,158" class="product" data-pname="1350 Микропарник GrowBag, 35л." data-pcol="1" data-pid="315" data-size="мешков, 35л." title="Заказать Микропарник GrowBag, 35л." />
+        <area shape="rect" coords="201,166,370,295" class="product" data-pname="1219 Грунт для водных растений, 18л." data-pcol="1" data-pid="95" data-size="мешков, 18л." title="Заказать Грунт для водных растений, 18л." />
+        <area shape="rect" coords="201,302,370,431" class="product" data-pname="1555 Грунт для газона и крупномерных растений, 50л." data-pcol="1" data-pid="36" data-size="мешков, 50л." title="Заказать Грунт для газона и крупномерных растений, 50л." />
+        <area shape="rect" coords="201,439,370,449" class="product" data-pname="19003 Торф верховой нейтральный, 150л." data-pcol="1" data-pid="196" data-size="мешков, 150л." title="Заказать Торф верховой нейтральный, 150л." />
+        <area shape="rect" coords="201,449,370,568" class="product" data-pname="19005 Торф верховой кислый, 150л." data-pcol="1" data-pid="257" data-size="мешков, 150л." title="Заказать Торф верховой кислый, 150л." />
+    </map>                                    
+				</div>
+			</div>
+			<div class="eight page">
+				<div class="pageContents">
+                                    <img alt="стр.8" src="catalog/Image_008.png" usemap="#p8Map" width="400" height="600">
+    <map name="p8Map" id="p8Map">
+        <area shape="rect" coords="25,28,195,158" class="product" data-pname="6010 Удобрение для декоративнолистных с микроэлементами, 0,5л." data-pcol="1" data-pid="254" data-size="бутылка, 0,5л." title="Заказать Удобрение для декоративнолистных с микроэлементами, 0,5л." />
+        <area shape="rect" coords="25,166,195,295" class="product" data-pname="6260 Удобрение для герани и балконных цветов с микроэлементами, 1л." data-pcol="1" data-pid="67" data-size="бутылка, 1л." title="Заказать Удобрение для герани и балконных цветов с микроэлементами, 1л." />
+        <area shape="rect" coords="25,302,195,431" class="product" data-pname="6812 Удобрение для томатов, 1л." data-pcol="1" data-pid="66" data-size="бутылка, 1л." title="Заказать Удобрение для томатов, 1л." />
+        <area shape="rect" coords="25,439,195,568" class="product" data-pname="7304 Блеск для листьев, 0,25л." data-pcol="1" data-pid="97" data-size="аэрозоль, 0,25л." title="Заказать Блеск для листьев, 0,25л." />
+        <area shape="rect" coords="201,28,370,38" class="product" data-pname="6101 Удобрение для комнатных растений, 0,5л." data-pcol="1" data-pid="69" data-size="бутылка, 0,5л." title="Заказать Удобрение для комнатных растений, 0,5л." />
+        <area shape="rect" coords="201,38,370,158" class="product" data-pname="6111 Универсальное удобрение для растений, 1л." data-pcol="1" data-pid="48" data-size="бутылка, 1л." title="Заказать Универсальное удобрение для растений, 1л." />        
+        <area shape="rect" coords="201,166,370,295" class="product" data-pname="6012 Удобрение для орхидей, 0,5л." data-pcol="1" data-pid="316" data-size="бутылка, 0,5л." title="Заказать Удобрение для орхидей, 0,5л." />
+        <area shape="rect" coords="201,302,370,431" class="product" data-pname="6216 Удобрение для хвойных растений, 3л." data-pcol="1" data-pid="256" data-size="канистра, 3л." title="Заказать Удобрение для хвойных растений, 3л." />
+        <area shape="rect" coords="201,439,370,568" class="product" data-pname="6000 Средство для срезанных растений, 0,5л." data-pcol="1" data-pid="96" data-size="бутылка, 0,5л." title="Заказать Средство для срезанных растений, 0,5л." />
+    </map>                                              
+				</div>
+			</div>
+			<div class="p9 page">
+				<div class="pageContents">
+                                    <img alt="стр.9" src="catalog/Image_009.png" usemap="#p9Map" width="400" height="600">
+    <map name="p9Map" id="p9Map">
+        <area shape="rect" coords="25,28,195,158" class="product" data-pname="6314 Долгодействующее удобрение для роз, 2,5кг." data-pcol="1" data-pid="44" data-size="коробка, 2,5кг." title="Заказать Долгодействующее удобрение для роз, 2,5кг." />
+        <area shape="rect" coords="25,166,195,295" class="product" data-pname="6626 Долгодействующее удобрение для газона с железом и магнием, 3кг." data-pcol="1" data-pid="40" data-size="коробка, 3кг." title="Заказать Долгодействующее удобрение для газона с железом и магнием, 3кг." />
+        <area shape="rect" coords="25,302,195,431" class="product" data-pname="6273 Специальное удобрение для роз с микроэлементами, 1л." data-pcol="1" data-pid="255" data-size="бутылка, 1л." title="Заказать Специальное удобрение для роз с микроэлементами, 1л." />
+        <area shape="rect" coords="25,439,195,568" class="product" data-pname="6934 Универсальное удобрение в палочках с магнием, 50шт." data-pcol="1" data-pid="45" data-size="упаковка, 50шт." title="Заказать Универсальное удобрение в палочках с магнием, 50шт." />
+        <area shape="rect" coords="201,28,370,158" class="product" data-pname="6220 Долгодействующее удобрение для хвойных растений, 2,5кг." data-pcol="1" data-pid="43" data-size="коробка, 2,5кг." title="Заказать Долгодействующее удобрение для хвойных растений, 2,5кг." />
+        <area shape="rect" coords="201,166,370,295" class="product" data-pname="6324 Долгодействующее удобрение для рододендронов, 2,5кг." data-pcol="1" data-pid="42" data-size="коробка, 2,5кг." title="Заказать Долгодействующее удобрение для рододендронов, 2,5кг." />
+        <area shape="rect" coords="201,302,370,431" class="product" data-pname="6555 Универсальное долгодействующее удобрение, 1кг." data-pcol="1" data-pid="46" data-size="банка, 1кг." title="Заказать Универсальное долгодействующее удобрение, 1кг." />
+        <area shape="rect" coords="201,439,370,568" class="product" data-pname="6720 Ускоритель компостизации, 3кг." data-pcol="1" data-pid="55" data-size="коробка, 3кг." title="Заказать Ускоритель компостизации, 3кг." />
+    </map>                                                                                  
+				</div>
+			</div>                    
+			<div class="p10 page">
+				<div class="pageContents">
+                                    <img alt="стр.10" src="catalog/Image_010.png" usemap="#p10Map" width="400" height="600">
+    <map name="p10Map" id="p10Map">
+        <area shape="poly" coords="29,430,29,303,194,305,194,391,82,398,80,430" class="product" data-pname="10510 Удобрение для комнатных растений ArganiQ, 0,5кг." data-pcol="1" data-pid="311" data-size="тюбик, 0,5кг." title="Заказать Удобрение для комнатных растений ArganiQ, 0,5кг." />
+        <area shape="rect" coords="202,303,372,430" class="product" data-pname="13520 Удобрение для посадки растений ArganiQ, 3,5кг." data-pcol="1" data-pid="313" data-size="ведерко, 3,5кг." title="Заказать Удобрение для посадки растений ArganiQ, 3,5кг." />
+        <area shape="poly" coords="29,569,29,440,89,441,88,418,191,411,194,432,240,442,371,442,369,569" class="product" data-pname="11510 Удобрение для сада и огорода ArganiQ, 1,5кг." data-pcol="1" data-pid="312" data-size="пакет, 1,5кг." title="Заказать Удобрение для сада и огорода ArganiQ, 1,5кг." /> />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p11 page">
+				<div class="pageContents">
+                                    <img alt="стр.11" src="catalog/Image_011.png" usemap="#p11Map" width="400" height="600">
+    <map name="p11Map" id="p11Map">
+        <area shape="rect" coords="27,166,195,293" class="product" data-pname="06001 Семена газона «Роял Грин Дарк», 1кг." data-pcol="1" data-pid="109" data-size="упаковка, 1кг." title="Заказать Семена газона «Роял Грин Дарк», 1кг." />
+        <area shape="rect" coords="27,302,195,432" class="product" data-pname="06004 Семена «Газон универсальный», 1кг." data-pcol="1" data-pid="283" data-size="упаковка, 1кг." title="Заказать Семена «Газон универсальный», 1кг." />
+        <area shape="rect" coords="202,166,371,293" class="product" data-pname="06002 Семена газона «Роял Грин Интенсив», 1кг." data-pcol="1" data-pid="144" data-size="упаковка, 1кг." title="Заказать Семена газона «Роял Грин Интенсив», 1кг." />
+        <area shape="rect" coords="202,302,371,432" class="product" data-pname="06028 Трава для кошек" data-pcol="1" data-pid="620" data-size="упаковка" title="Заказать 06028 Трава для кошек" />
+        <area shape="rect" coords="27,450,141,569" class="product" data-pname="06031 Цветущий город (туба), 1.7л." data-pcol="1" data-pid="622" data-size="туба, 1.7л." title="Заказать Цветущий город (туба), 1.7л." />
+        <area shape="rect" coords="145,450,252,569" class="product" data-pname="06032 Инстант-гарден (туба), 1.7л." data-pcol="1" data-pid="623" data-size="туба, 1.7л." title="Заказать Инстант-гарден (туба), 1.7л." />
+        <area shape="rect" coords="259,450,369,569" class="product" data-pname="06033 Эко магистраль (туба), 1.7л." data-pcol="1" data-pid="624" data-size="туба, 1.7л." title="Заказать Эко магистраль (туба), 1.7л." />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p12 page">
+				<div class="pageContents">
+                                    <img alt="стр.12" src="catalog/Image_012.png" usemap="#p12Map" width="400" height="600">
+    <map name="p12Map" id="p12Map">
+        <area shape="rect" coords="27,28,91,40" class="product" data-pname="06055 Чудесные бобы с надписью «Love»" data-pcol="1" data-pid="625" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Love»" />
+        <area shape="rect" coords="27,40,91,52" class="product" data-pname="06056 Чудесные бобы с надписью «Happy»" data-pcol="1" data-pid="626" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Happy»" />
+        <area shape="rect" coords="27,52,99,129" class="product" data-pname="06055 Чудесные бобы с надписью «Love»" data-pcol="1" data-pid="625" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Love»" />
+        <area shape="rect" coords="58,132,99,153" class="product" data-pname="06056 Чудесные бобы с надписью «Happy»" data-pcol="1" data-pid="626" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Happy»" />
+        
+        <area shape="rect" coords="252,51,371,141" class="product" data-pname="06055 Чудесные бобы с надписью «Love»" data-pcol="1" data-pid="625" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Love»" />
+        <area shape="rect" coords="252,142,342,156" class="product" data-pname="06056 Чудесные бобы с надписью «Happy»" data-pcol="1" data-pid="626" data-size="мешочек" title="Заказать Чудесные бобы с надписью «Happy»" />
+        
+        <area shape="rect" coords="27,177,136,187" class="product" data-pname="90656 «Ромашка аптечная»" data-pcol="1" data-pid="418" data-size="пакет" title="Заказать «Ромашка аптечная»" />
+        <area shape="rect" coords="27,188,136,197" class="product" data-pname="90236 «Календула Оранж»" data-pcol="1" data-pid="420" data-size="пакет" title="Заказать «Календула Оранж»" />
+        <area shape="rect" coords="27,197,161,206" class="product" data-pname="90595 «Подсолнечник домашний»" data-pcol="1" data-pid="422" data-size="пакет" title="Заказать «Подсолнечник домашний»" />
+        <area shape="rect" coords="27,206,136,215" class="product" data-pname="90298 «Кориандр пряный»" data-pcol="1" data-pid="424" data-size="пакет" title="Заказать «Кориандр пряный»" />
+        <area shape="rect" coords="27,215,161,224" class="product" data-pname="90113 «Бархатцы золотистые»" data-pcol="1" data-pid="426" data-size="пакет" title="Заказать «Бархатцы золотистые»" />
+        <area shape="rect" coords="27,224,128,233" class="product" data-pname="90274 «Колеус огненный»" data-pcol="1" data-pid="428" data-size="пакет" title="Заказать «Колеус огненный»" />
+        
+        <area shape="rect" coords="202,177,299,187" class="product" data-pname="90779 «Чабрец чайный»" data-pcol="1" data-pid="406" data-size="пакет" title="Заказать «Чабрец чайный»" />
+        <area shape="rect" coords="202,188,311,197" class="product" data-pname="90816 «Шалфей душистый»" data-pcol="1" data-pid="408" data-size="пакет" title="Заказать «Шалфей душистый»" />
+        <area shape="rect" coords="202,197,311,206" class="product" data-pname="90212 «Ипомея Утренняя красавица»" data-pcol="1" data-pid="410" data-size="пакет" title="Заказать «Ипомея Утренняя красавица»" />
+        <area shape="rect" coords="202,206,311,215" class="product" data-pname="90250 «Удачный клевер»" data-pcol="1" data-pid="412" data-size="пакет" title="Заказать «Удачный клевер»" />
+        <area shape="rect" coords="202,215,311,224" class="product" data-pname="90076 «Базилик ароматный»" data-pcol="1" data-pid="414" data-size="пакет" title="Заказать «Базилик ароматный»" />
+        <area shape="rect" coords="202,224,311,233" class="product" data-pname="90557 «Петрушка кучерявая»" data-pcol="1" data-pid="416" data-size="пакет" title="Заказать «Петрушка кучерявая»" />
+        
+        <area shape="rect" coords="35,238,52,267" class="product" data-pname="90656 «Ромашка аптечная»" data-pcol="1" data-pid="90656" data-size="пакет" title="Заказать «Ромашка аптечная»" />
+        <area shape="rect" coords="57,238,76,267" class="product" data-pname="90236 «Календула Оранж»" data-pcol="1" data-pid="420" data-size="пакет" title="Заказать «Календула Оранж»" />
+        <area shape="rect" coords="81,238,100,267" class="product" data-pname="90595 «Подсолнечник домашний»" data-pcol="1" data-pid="422" data-size="пакет" title="Заказать «Подсолнечник домашний»" />
+        <area shape="rect" coords="105,238,124,267" class="product" data-pname="90298 «Кориандр пряный»" data-pcol="1" data-pid="424" data-size="пакет" title="Заказать «Кориандр пряный»" />
+        <area shape="rect" coords="129,238,146,267" class="product" data-pname="90113 «Бархатцы золотистые»" data-pcol="1" data-pid="426" data-size="пакет" title="Заказать «Бархатцы золотистые»" />
+        <area shape="rect" coords="152,238,171,267" class="product" data-pname="90557 «Петрушка кучерявая»" data-pcol="1" data-pid="416" data-size="пакет" title="Заказать «Петрушка кучерявая»" />
+        
+        <area shape="rect" coords="35,270,52,300" class="product" data-pname="90779 «Чабрец чайный»" data-pcol="1" data-pid="406" data-size="пакет" title="Заказать «Чабрец чайный»" />
+        <area shape="rect" coords="57,270,76,300" class="product" data-pname="90816 «Шалфей душистый»" data-pcol="1" data-pid="408" data-size="пакет" title="Заказать «Шалфей душистый»" />
+        <area shape="rect" coords="81,270,100,300" class="product" data-pname="90212 «Ипомея Утренняя красавица»" data-pcol="1" data-pid="410" data-size="пакет" title="Заказать «Ипомея Утренняя красавица»" />
+        <area shape="rect" coords="105,270,124,300" class="product" data-pname="90250 «Удачный клевер»" data-pcol="1" data-pid="412" data-size="пакет" title="Заказать «Удачный клевер»" />
+        <area shape="rect" coords="129,270,146,300" class="product" data-pname="90076 «Базилик ароматный»" data-pcol="1" data-pid="414" data-size="пакет" title="Заказать «Базилик ароматный»" />
+        <area shape="rect" coords="152,270,171,300" class="product" data-pname="90557 «Петрушка кучерявая»" data-pcol="1" data-pid="416" data-size="пакет" title="Заказать «Петрушка кучерявая»" />
+        
+        <area shape="rect" coords="28,327,195,444" class="product" data-pname="06092 Черногорень лекарственный «Циноглоссум»" data-pcol="1" data-pid="637" data-size="пакет" title="Заказать Черногорень лекарственный «Циноглоссум»" />
+        <area shape="rect" coords="28,455,195,569" class="product" data-pname="06094 Скорцонер «Лечебный»" data-pcol="1" data-pid="639" data-size="пакет" title="Заказать Скорцонер «Лечебный»" />
+        <area shape="rect" coords="203,327,371,444" class="product" data-pname="06093 Чабер огородный «Чарли»" data-pcol="1" data-pid="638" data-size="пакет" title="Заказать Чабер огородный «Чарли»" />
+        <area shape="rect" coords="203,455,371,569" class="product" data-pname="06095 Репешок обыкновенный" data-pcol="1" data-pid="640" data-size="пакет" title="Заказать Репешок обыкновенный" />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p13 page">
+				<div class="pageContents">
+                                    <img alt="стр.13" src="catalog/Image_013.png" usemap="#p13Map" width="400" height="600">
+    <map name="p13Map" id="p13Map">
+        <area shape="rect" coords="29,30,62,169" class="product" data-pname="06007 Морковь «Золотая осень»" data-pcol="1" data-pid="635" data-size="пакет" title="Заказать Морковь «Золотая осень»" />
+        <area shape="rect" coords="65,30,97,169" class="product" data-pname="06008 Морковь «Амстердамская»" data-pcol="1" data-pid="636" data-size="пакет" title="Заказать Морковь «Амстердамская»" />
+        <area shape="rect" coords="99,30,131,169" class="product" data-pname="06009 Морковь «Лосиноостровская 13»" data-pcol="1" data-pid="132" data-size="пакет" title="Заказать Морковь «Лосиноостровская 13»" />
+        <area shape="rect" coords="133,30,165,169" class="product" data-pname="06010 Огурец «F1 Малосольный»" data-pcol="1" data-pid="629" data-size="пакет" title="Заказать Огурец «F1 Малосольный»" />
+        <area shape="rect" coords="166,30,200,169" class="product" data-pname="06011 Огурец «Родничок F1»" data-pcol="1" data-pid="630" data-size="пакет" title="Заказать Огурец «Родничок F1»" />
+        <area shape="rect" coords="202,30,233,169" class="product" data-pname="06012 Огурец «Веселые друзья F1» корнишон Н12" data-pcol="1" data-pid="630" data-size="пакет" title="Заказать Огурец «Веселые друзья F1» корнишон Н12" />
+        <area shape="rect" coords="236,30,267,169" class="product" data-pname="06013 Перец кустарниковый «Кармен»" data-pcol="1" data-pid="631" data-size="пакет" title="Заказать Перец кустарниковый «Кармен»" />
+        <area shape="rect" coords="270,30,301,169" class="product" data-pname="06014 Перец «Красный куб»" data-pcol="1" data-pid="632" data-size="пакет" title="Заказать Перец «Красный куб»" />
+        <area shape="rect" coords="303,30,335,169" class="product" data-pname="06022 Перец «Шоколадка F1»" data-pcol="1" data-pid="632" data-size="пакет" title="Заказать Перец «Шоколадка F1»" />
+        <area shape="rect" coords="337,30,370,169" class="product" data-pname="06023 Томат «Черный принц»" data-pcol="1" data-pid="633" data-size="пакет" title="Заказать Томат «Черный принц»" />
+
+        <area shape="rect" coords="29,170,62,310" class="product" data-pname="06024 Томат «Пантикапей F1»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Томат «Пантикапей F1»" />
+        <area shape="rect" coords="65,170,97,310" class="product" data-pname="06025 Томат «Жираф»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Томат «Жираф»" />
+        <area shape="rect" coords="99,170,131,310" class="product" data-pname="06026 Томат черри «Помисолька»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Томат черри «Помисолька»" />
+        <area shape="rect" coords="133,170,165,310" class="product" data-pname="06029 Кобачок «Аэронавт»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Кобачок «Аэронавт»" />
+        <area shape="rect" coords="166,170,200,310" class="product" data-pname="06030 Кобачок «Белогор F1»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Кобачок «Белогор F1»" />
+        <area shape="rect" coords="202,170,233,310" class="product" data-pname="06037 Тыква мускатная «Жемчужина»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Тыква мускатная «Жемчужина»" />
+        <area shape="rect" coords="236,170,267,310" class="product" data-pname="06038 Тыква «Витаминная»" data-pcol="1" data-pid="634" data-size="пакет" title="Заказать Тыква «Витаминная»" />
+        <area shape="rect" coords="270,170,301,310" class="product" data-pname="06034 Капуста брюссел. «Боксер»" data-pcol="1" data-pid="627" data-size="пакет" title="Заказать Капуста брюссел. «Боксер»" />
+        <area shape="rect" coords="303,170,335,310" class="product" data-pname="06035 Капуста белокоч. «Краутман F1»" data-pcol="1" data-pid="628" data-size="пакет" title="Заказать Капуста белокоч. «Краутман F1»" />
+        <area shape="rect" coords="337,170,370,310" class="product" data-pname="06036 Капуста пекинская «Юки F1, H14»" data-pcol="1" data-pid="628" data-size="пакет" title="Заказать Капуста пекинская «Юки F1, H14»" />
+        
+        <area shape="rect" coords="28,318,195,432" class="product" data-pname="06015 Набор семян «Клумба»" data-pcol="1" data-pid="146" data-size="комплект" title="Заказать Набор семян «Клумба»" />
+        <area shape="rect" coords="204,318,370,432" class="product" data-pname="06017 Набор семян «Зеленая грядка»" data-pcol="1" data-pid="438" data-size="комплект" title="Заказать Набор семян «Зеленая грядка»" />
+        <area shape="rect" coords="28,441,223,460" class="product" data-pname="06050 Комплект для выращивания грибов Вешенка" data-pcol="1" data-pid="438" data-size="комплект" title="Заказать Комплект для выращивания грибов Вешенка" />
+        <area shape="rect" coords="28,460,115,566" class="product" data-pname="06050 Комплект для выращивания грибов Вешенка" data-pcol="1" data-pid="438" data-size="комплект" title="Заказать Комплект для выращивания грибов Вешенка" />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p14 page">
+				<div class="pageContents">
+                                    <img alt="стр.14" src="catalog/Image_014.png" usemap="#p14Map" width="400" height="600">
+    <map name="p14Map" id="p14Map">
+        <area shape="rect" coords="28,167,195,295" class="product" data-pname="07042 Гризли, 20г." data-pcol="1" data-pid="159" data-size="упаковка" title="Заказать Гризли, 20г." />
+        <area shape="rect" coords="28,303,195,431" class="product" data-pname="07048 Топаз, 2мл." data-pcol="1" data-pid="612" data-size="упаковка" title="Заказать Топаз, 2мл." />
+        <area shape="rect" coords="28,440,195,569" class="product" data-pname="07044 Рибав-Экстра, 1мл." data-pcol="1" data-pid="606" data-size="упаковка" title="Заказать Рибав-Экстра, 1мл." />
+        <area shape="rect" coords="204,167,371,295" class="product" data-pname="07041 Биотлин, 9мл." data-pcol="1" data-pid="608" data-size="упаковка" title="Заказать Биотлин, 9мл." />
+        <area shape="rect" coords="204,303,371,431" class="product" data-pname="07047 Торнадо, 100мл." data-pcol="1" data-pid="616" data-size="упаковка" title="Заказать Торнадо, 100мл." />
+        <area shape="rect" coords="204,440,371,569" class="product" data-pname="07005 Крезацин, 1мл." data-pcol="1" data-pid="117" data-size="упаковка" title="Заказать Крезацин, 1мл." />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p15 page">
+				<div class="pageContents">
+                                    <img alt="стр.15" src="catalog/Image_015.png" usemap="#p15Map" width="400" height="600">
+    <map name="p15Map" id="p15Map">
+        <area shape="rect" coords="28,30,195,159" class="product" data-pname="07007 Здоровая земля, 50мл." data-pcol="1" data-pid="118" data-size="упаковка" title="Заказать Здоровая земля, 50мл." />
+        <area shape="rect" coords="28,167,195,295" class="product" data-pname="07046 Танрек, 10мл." data-pcol="1" data-pid="614" data-size="упаковка" title="Заказать Танрек, 10мл." />
+        <area shape="rect" coords="28,303,195,434" class="product" data-pname="07036 Кинмикс, 10мл." data-pcol="1" data-pid="358" data-size="упаковка" title="Заказать Кинмикс, 10мл." />
+        <area shape="rect" coords="28,439,195,569" class="product" data-pname="07040 Абига-Пик, 75г." data-pcol="1" data-pid="366" data-size="упаковка" title="Заказать Абига-Пик, 75г." />
+        
+        <area shape="rect" coords="203,30,371,159" class="product" data-pname="07008 Здоровый газон, 500мл." data-pcol="1" data-pid="507" data-size="упаковка" title="Заказать Здоровый газон, 500мл." />
+        <area shape="rect" coords="203,167,371,295" class="product" data-pname="07039 Ордан, 25г." data-pcol="1" data-pid="364" data-size="упаковка" title="Заказать Ордан, 25г." />
+        <area shape="rect" coords="203,303,371,434" class="product" data-pname="07038 Медный купорос, 100г." data-pcol="1" data-pid="362" data-size="упаковка" title="Заказать Медный купорос, 100г." />
+        <area shape="rect" coords="203,439,371,569" class="product" data-pname="07031 Профилактин, 500мл." data-pcol="1" data-pid="641" data-size="упаковка" title="Заказать Профилактин, 500мл." />
+    </map>                                    
+				</div>
+			</div>                    
+			<div class="p16 page">
+				<div class="pageContents">
+                                    <img alt="стр.16" src="catalog/Image_016.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p17 page">
+				<div class="pageContents">
+                                    <img alt="стр.17" src="catalog/Image_017.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p18 page">
+				<div class="pageContents">
+                                    <img alt="стр.18" src="catalog/Image_018.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p19 page">
+				<div class="pageContents">
+                                    <img alt="стр.19" src="catalog/Image_019.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="p20 page">
+				<div class="pageContents">
+                                    <img alt="стр.20" src="catalog/Image_020.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p21 page">
+				<div class="pageContents">
+                                    <img alt="стр.21" src="catalog/Image_021.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p22 page">
+				<div class="pageContents">
+                                    <img alt="стр.22" src="catalog/Image_022.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p23 page">
+				<div class="pageContents">
+                                    <img alt="стр.23" src="catalog/Image_023.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p24 page">
+				<div class="pageContents">
+                                    <img alt="стр.24" src="catalog/Image_024.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p25 page">
+				<div class="pageContents">
+                                    <img alt="стр.25" src="catalog/Image_025.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p26 page">
+				<div class="pageContents">
+                                    <img alt="стр.26" src="catalog/Image_026.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p27 page">
+				<div class="pageContents">
+                                    <img alt="стр.27" src="catalog/Image_027.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p28 page">
+				<div class="pageContents">
+                                    <img alt="стр.28" src="catalog/Image_028.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p29 page">
+				<div class="pageContents">
+                                    <img alt="стр.29" src="catalog/Image_029.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p30 page">
+				<div class="pageContents">
+                                    <img alt="стр.30" src="catalog/Image_030.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p31 page">
+				<div class="pageContents">
+                                    <img alt="стр.31" src="catalog/Image_031.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p32 page">
+				<div class="pageContents">
+                                    <img alt="стр.32" src="catalog/Image_032.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p33 page">
+				<div class="pageContents">
+                                    <img alt="стр.33" src="catalog/Image_033.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p34 page">
+				<div class="pageContents">
+                                    <img alt="стр.34" src="catalog/Image_034.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p35 page">
+				<div class="pageContents">
+                                    <img alt="стр.35" src="catalog/Image_035.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p36 page">
+				<div class="pageContents">
+                                    <img alt="стр.36" src="catalog/Image_036.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p37 page">
+				<div class="pageContents">
+                                    <img alt="стр.37" src="catalog/Image_037.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p38 page">
+				<div class="pageContents">
+                                    <img alt="стр.38" src="catalog/Image_038.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p39 page">
+				<div class="pageContents">
+                                    <img alt="стр.39" src="catalog/Image_039.png" width="400" height="600">
+				</div>
+			</div>       
+			<div class="p40 page">
+				<div class="pageContents">
+                                    <img alt="стр.40" src="catalog/Image_040.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p41 page">
+				<div class="pageContents">
+                                    <img alt="стр.41" src="catalog/Image_041.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p42 page">
+				<div class="pageContents">
+                                    <img alt="стр.42" src="catalog/Image_042.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p43 page">
+				<div class="pageContents">
+                                    <img alt="стр.43" src="catalog/Image_043.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p44 page">
+				<div class="pageContents">
+                                    <img alt="стр.44" src="catalog/Image_044.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p45 page">
+				<div class="pageContents">
+                                    <img alt="стр.45" src="catalog/Image_045.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p46 page">
+				<div class="pageContents">
+                                    <img alt="стр.46" src="catalog/Image_046.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p47 page">
+				<div class="pageContents">
+                                    <img alt="стр.47" src="catalog/Image_047.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p48 page">
+				<div class="pageContents">
+                                    <img alt="стр.48" src="catalog/Image_048.png" width="400" height="600">
+				</div>
+			</div>    
+
+		</div>
+		<span class="control right" >&gt;</span>
+	</div>
+
+    <!--
+<div id="draggable" class="ui-widget-content">
+  <p>Drag me to my target</p>
+</div>
+
+    
+<div id="droppable" class="ui-widget-header">
+  <p>Drop here</p>
+</div>        
+!-->
+    
+    <div id='basket-panel' class="toggler ui-widget-content">
+  <div id="effect" class="ui-widget-content ui-corner-all">
+      <h3 class="ui-widget-header ui-corner-all"><a href="#" id="button" class="ui-state-default ui-corner-all" title="Свернуть корзину"><</a>Корзина</h3>
+    <select name="effects" id="effectTypes" hidden>
+  <option value="blind">Blind</option>
+  <option value="bounce">Bounce</option>
+  <option value="clip">Clip</option>
+  <option value="drop">Drop</option>
+  <option value="explode">Explode</option>
+  <option value="fade">Fade</option>
+  <option value="fold">Fold</option>
+  <option value="highlight">Highlight</option>
+  <option value="puff">Puff</option>
+  <option value="pulsate">Pulsate</option>
+  <option value="scale">Scale</option>
+  <option value="shake">Shake</option>
+  <option value="size">Size</option>
+  <option value="slide">Slide</option>
+  <option value="transfer">Transfer</option>
+</select>
+    <div id="accordion" class="ui-widget-content ui-corner-all">
+  
+        <h3>Заказы</h3>
+        <div><div><button id="OrderBtn" class="ui-state-default ui-corner-all">Заказать</button><button id="OrderClearBtn" class="ui-state-default ui-corner-all">Отменить</button></div><div id="Order" class="column"></div></div>
+  
+        <h3>Заказано</h3>
+  
+        <div><div><button id="OrderedBtn" hidden="" class="ui-state-default ui-corner-all">Подтвердить</button></div><div id="Ordered" class="column"></div></div>
+  <h3>Избранное</h3>
+  
+  <div id="Favorites">
+    <p>
+        Избранные товары:
+    </p>
+    <ul>
+      <li>Земля</li>
+      <li>Удобрение</li>
+      <li>Тяпка</li>
+    </ul>
+    <button onclick="(function(){$(parent).remove();});">-</button>
+  </div>
+  <h3>Параметры</h3>
+  <div id="Settings">
+      <div class="ui-widget">
+          <table>
+              <tr>
+                  <td>
+                    <label>Имя: </label>
+                  </td>
+                  <td>
+                    <input id="user-name-first" class="cashable">
+                  </td>
+             </tr>
+             <tr>
+                  <td>
+                    <label>Отчество: </label>
+                  </td>
+                  <td>
+                      <input id="user-name-second" class="cashable">
+                  </td>
+             </tr>
+             <tr>
+                  <td>
+                      <label>Фамилия: </label>
+                  </td>
+                  <td>
+                      <input id="user-name-third" class="cashable">
+                  </td>
+             </tr>
+             <tr>
+                  <td>
+                      <label>Сотовый: </label>
+                  </td>
+                  <td>
+                      <input id="user-name-cell" class="cashable">
+                  </td>
+             </tr>
+             <tr>
+                  <td>
+                      <label>e-mail: </label>
+                  </td>
+                  <td>
+                      <input id="user-name-email" class="cashable">
+                  </td>
+             </tr>
+          </table>
+      </div>      
+      
+    <p>
+        Данная информация обязательна для корректного формирования заказа.
+    </p>
+  </div>
+</div>        
+
+  </div>
+</div>
+    
+  <script>
+  $(function() {
+    $( "#accordion" ).accordion({
+      heightStyle: "fill"
+    });
+  });
+  </script>
+    
+	<script src="modernizr-2.6.2.js"></script>
+	<script src="webcam-swiper-0.1.js"></script>
+	<script src="demo.js"></script>
+       
+    <script>
+      $('#ProductClearBtn').click( function(){
+          $(this).parent().parent().remove();
+      });
+  </script>
+  
+  <script>
+  function doOneUp(which,callback) {
+    $(which)
+        .next()
+        .show()
+        .animate({
+            top:"-=50px",
+            opacity:"toggle"
+            },
+            1000,
+            function() {
+                $(this)
+                    .css({top:""})
+                    .hide('slow',callback)
+                    .remove();
+            }
+    );
+  }
+  
+  $(function() {
+    $(".product").click(function(e) {
+        //data-pname="Земля черная" data-pcol="1" data-pid="1" data-size="мешочек"
+            var prod_name=$(this).attr("data-pname");
+            var prod_pcol=$(this).attr("data-pcol");
+            var prod_size=$(this).attr("data-size");
+            var prod_id = $(this).attr("data-pid");
+            //проверяем есть ли уже в корзине, если есть то увеличиваем количество на 1
+            var p = $("#pid_"+prod_id);
+            if (p.length==0) {
+            var s='<div id="pid_'+prod_id+'" class="ordered-portlet portlet product-portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" data-pname="'+prod_name+'" data-pid="'+prod_id+'">\n\
+                    <div class="portlet-header ui-widget-header ui-corner-all">\n\
+                    <span class="ui-icon ui-icon-minusthick ordered-prod-name"></span>'+prod_name+'</div>\n\
+                    <div class="portlet-content"><p><label for="spinner">'+prod_size+':</label><input class="spin ui-state-default ui-corner-all" style="width: 50px;" value="'+prod_pcol+'" align="right"/></p>\n\
+                    </div>\n\
+                  </div>';
+            $(s).appendTo("#Order");
+            } else {
+                $("#pid_"+prod_id).find(".spin").val( parseInt(($("#pid_"+prod_id).find(".spin").val()))+1);
+            }
+            
+    $( ".column" ).sortable({
+      connectWith: ".column"
+    });
+ 
+    $( ".portlet" ).find( ".portlet-header span" ).remove('span');
+            
+    $( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+      .find( ".portlet-content" );
+ 
+    $( ".portlet-header .ui-icon" ).click(function() {
+      $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+      $( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+    });
+ 
+    $( ".column" ).disableSelection();
+    $('<span>Добавлено !!!</span>').addClass('adding').insertAfter('.product');
+    doOneUp(this,function() {$(this).prev().text('Добавлено');});
+    e.preventDefault();
+    });
+  });      
+  </script> 
+  <script>
+      $('#OrderBtn').click( function(){
+          $('.product-portlet').removeClass('product-portlet').addClass('product-ordered-portlet').replaceAll('#Ordered').end();
+          $('#OrderedBtn').show();
+      });
+  </script>
+  
+  <script>
+      $('#OrderClearBtn').click( function(){
+          $('.product-portlet').remove('.product-portlet');
+      });
+  </script>
+
+  <div id="orderedDialog" title="Подтвердить заказ" hidden="">
+    <form method="post" action = "http://interactivefishing.tv:9080/order">
+        <table id="ordered-list" border="1" cellpadding="7" cellspacing="0">
+            <thead id="ordered-list-body" class="ui-state-default ui-corner-all">
+                <tr>
+                    <td width="200px" align="center">Арт. Наименование</td>
+                    <td width="100px" align="center">Кол-во<br>(шт)</td>
+                    <td width="200px" align="center">Цена<br>(руб.)</td>
+                    <td width="200px" align="center">Сумма<br>(руб.)</td>
+                </tr>
+            </thead>
+        </table>
+        <div id="buttonDiv">
+            <button class="ui-state-default ui-corner-all" type="submit">Отправить</button>
+        </div>
+    </form>
+  </div>
+
+ <script>
+//---------------------------------
+    $('#OrderedBtn').click( function(){
+        $( "#orderedDialog" ).dialog({
+          open: function( event, ui ) {
+              
+              $(".ordered-portlet").each(function(i,p) {
+                  var cnt = $(this).find(".spin").val();
+                  var pid = +$(this).attr("data-pid");
+                  var idname = "id_"+pid+"_"+cnt;
+                  $("<tr><td>"+$(this).attr("data-pname")+"</td><td>"+cnt+"</td><td id='prise_"+idname+"'></td><td id='totalPrise_"+idname+"'></td><tr></tbody>").insertAfter('#ordered-list-body');
+                  phreebie.getProductTotalPrise(pid,cnt,idname);                  
+              });
+              $("<tfoot><tr><td>Итого:</td><td></td><td></td><td id='totalSum'>0.0</td><tr></tfoot>").insertAfter('#ordered-list-body');
+          }});
+
+          $('.product-ordered-portlet').remove('.product-ordered-portlet');
+          $(this).hide();
+              
+      });
+//-------------------------------------      
+
+  </script>
+  <script src="js/basket.js"></script>
+
+</body>
+</html>

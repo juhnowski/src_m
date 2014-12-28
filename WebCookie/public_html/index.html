@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="jquery-ui.css" />
+        <script src="jquery-2.0.3.min.js"></script>
+        <script src="jquery-ui.js"></script>        
+        <script src='jquery.cookie.js'></script>
+        <script>
+
+            $(document).ready(function() {
+                $.cookie.json=true;
+                $.cookie.raw=true;
+                $.cookie('the_cookie', "the_cookie_value");
+                var q = $.cookie('the_cookie');
+                alert("the_cookie="+q);
+                
+var Circle = function(x, y, r) {
+      this.x = x;
+      this.y = y;
+      this.r = r;
+}
+
+$.extend(Circle.prototype, {
+      area: function() {
+            return Math.PI * this.r * this.r;
+      },
+      diameter: function() {
+            return 2 * this.r;
+      }
+});
+
+var mycircle = new Circle(100, 200, 50);
+alert(mycircle.r + ' -> ' + mycircle.area());                
+            });
+            
+        </script>
+    </head>
+    <body>
+        <div class="personal"></div>
+    </body>
+</html>

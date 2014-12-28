@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Мастерграунд</title>
+	<meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" media="all" href="masterground.css" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" href="db.css" />
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script src="jquery.tmpl.js" type="text/javascript"></script>
+        <script src="db.js" type="text/javascript"></script>
+        <script src="js/jquery.zoomooz.min.js"></script>
+        <script src="js/initzoom.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+        <style>
+            .toggler { height: 100%; position: absolute; top:0; left: 0; padding: 0.4em;}
+            #button { padding: .5em 1em; text-decoration: none; }
+            #effect { width: 240px; height: 100%; position: absolute; }
+            #effect h3 { margin: 0; padding: 0.4em; text-align: center; }
+            .ui-effects-transfer { border: 2px dotted gray; }
+            #draggable { width: 100px; height: 100px; padding: 0.5em; float: left; margin: 10px 10px 10px 0; }
+            #droppable { width: 150px; height: 150px; padding: 0.5em; float: left; margin: 10px; }
+        </style>
+        <style>
+            label {
+                display: inline-block;
+                width: 3em;
+            }
+        </style>
+        <style>
+            #progressbar .ui-progressbar-value {
+                background-color: #ccc;
+            }
+        </style>
+  <script>
+  $(function() {
+  //  $( "#resizable" ).resizable();
+       $( "#progressbar" ).progressbar({
+      value: false
+    });
+  });
+  </script>        
+<script>
+
+    function runEffect() {
+      var selectedEffect = $( "#effectTypes" ).val();
+      if (selectedEffect==="drop") {
+          selectedEffect="slide";
+      } else {
+          selectedEffect="drop";
+      }
+      $( "#effectTypes" ).val(selectedEffect);
+      var options = {};
+      $( "#effect" ).effect( selectedEffect, options, 500, callback );
+    };
+ 
+    function callback() {
+      var selectedEffect = $( "#effectTypes" ).val();
+      if (selectedEffect==="drop") {
+         $('#korzina').show();
+      }else{
+         $('#korzina').hide(); 
+      }
+      
+    };
+ 
+ $(function(){
+
+    $( "#button" ).click(function() {
+      runEffect();
+      return false;
+    });
+    
+    runEffect();
+
+    $( ".instructions" ).fadeIn( 2000 ).delay( 2000 ).slideUp();
+ })
+ 
+     $( "#draggable" ).draggable();
+    $( "#droppable" ).droppable({
+      drop: function( event, ui ) {
+        $( this )
+          .addClass( "ui-state-highlight" )
+          .find( "p" )
+            .html( "Dropped!" );
+      }
+    });
+    
+    $( ".column" ).sortable({
+      connectWith: ".column"
+    });
+ 
+    $( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+      .find( ".portlet-content" );
+ 
+    $( ".portlet-header .ui-icon" ).click(function() {
+      $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+      $( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+    });
+ 
+    $( ".column" ).disableSelection();
+    $(".splash-screen").hide();
+  </script>      
+
+  <style>
+  .column { width: 170px; float: left; padding-bottom: 100px; }
+  .portlet { margin: 0 1em 1em 0; }
+  .portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+  .portlet-header .ui-icon { float: right; }
+  .portlet-content { padding: 0.4em; }
+  .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+  .ui-sortable-placeholder * { visibility: hidden; }
+  </style>
+
+  <script id="dataTmpl" type="text/x-jquery-tmpl">
+      
+  </script>
+  <!--
+  <script type="text/javascript">
+      $(document).ready(function() {
+          $('<button class="ui-state-default ui-corner-all">Обновить</button>').appendTo(".instructions")
+                  .click(function(e){
+          $.get("mydata.json", function(data) {
+              
+          });
+                  });
+      });
+  </script>
+  !-->
+</head>
+<body>
+   
+    <div id="korzina" title="Корзина покупок">
+        <img id="korzina-button" src="images/korzina.gif" width="50%">
+        <img id="Out" src="images/zoomout.png"  width="50%"/>
+        <img id="In" src="images/zoomin.png"  width="50%"/>
+    </div>
+    
+    <div class="instructions">
+            <a id="webmsg">Направьте камеру на себя и листайте каталог движением руки влево/вправо.</a>
+    <div class='splash-screen'>
+        <div id="splash-screen-logo"><img src="images/hex0.jpg"></div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>               
+	</div>
+
+    <div class="content">
+            
+            <span class="control left">&lt;</span>
+		<div class="book">
+			<div class="one page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_001.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="two page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_002.png" width="400" height="600">
+				</div>
+			</div>
+                    <div class="three page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_003.png"  width="400" height="600">
+				</div>
+			</div>
+			<div class="four page">
+				<div class="pageContents">
+                                    <p class="page-order-header">Сделано червями</p>
+                                    <div class="p4-div">
+                                        <p class="page-order-text zoomTarget" data-targetsize="0.45">Биогумус – экологически чистое 100 % органическое
+удобрение, произведенное путем компостирования и последующей переработки навоза КРС красными калифорнийскими компостными червями «Eisenia
+foetida». Биогумус представляет собой универсальное удобрение для выращивания растений, нуждающихся в здоровой, плодородной почве.
+Органические материалы, переработанные червями, подвергаются глубоким структурным изменениям, разлагаются
+до аминокислот, обогащаются полезной микрофлорой кишечника червей, ферментами, витаминами и другими биологически активными веществами. Удобрение содержит
+полный набор сбалансированных питательных веществ, необходимых для нормального роста и развития растений
+на всех видах почв.</p>
+                                    </div>
+                                    <div class="p4-div-1 zoomTarget" data-targetsize="0.45"><p class="page-order-text">Размер капролитов Биогумуса от 0,1 до 2 мм</p></div>
+
+                                    <div class="p4-div-2  zoomTarget" data-targetsize="0.45"><p class="page-order-text">Биологический вид: Eusenia foetida<br>
+Длина тела червей: 4–5 см<br>
+Вес взрослой особи: 0,4 г</p></div>
+
+<div class="p4-div-3  zoomTarget"><p class="page-order-text">Размер капролитов Террагумуса<br>
+от 0,4 до 5 мм</p></div>
+                                    
+<div class="p4-div-4  zoomTarget"><p class="page-order-text">Террагумус – 100 % натуральный продукт, состоит из поч-
+вообразующих гранул, имеет однородную структуру. Изготовлен из питательного субстрата на основе низинного торфа с добавлением питательных компонентов,
+путем его переработки специальными более крупными червями Eisenia hortensis.
+Стабильные и функциональные структуры, полученные биоразложением органического вещества в пищеварительном
+тракте червя, долгое время не распадаются в почве и позволяют сформировать в прикорневой зоне оптимальные условия развития растения.
+Гранулированные компоненты террагумуса улучшают физическую структуру почвы, повышая ее пористость, способствуя доступу воздуха, воды и питательных веществ.</p></div>
+                                    
+<div class="p4-div-5"><p class="page-order-text">Биологический вид: Eusenia hortensis<br>
+Длина тела червей: 7–8 см<br>
+Вес взрослой особи: 1,3 г</p></div>
+                                    
+<div class="p4-div-6">
+    <table>
+            <tr class="page-oreder-table-header">
+        <td>
+            Диапозон (кг)
+        </td>            
+        <td>
+            1000 и более
+        </td>            
+        <td>
+            от 500<br>до 990
+        </td>        
+        <td>
+            от 250<br>до 490
+        </td>                
+        <td>
+            от 200<br>до 240
+        </td>              
+        <td>
+            от 150<br>до 190
+        </td>              
+        <td>
+            от 100<br>до 140
+        </td>                      
+        <td>
+            от 50<br>до 90
+        </td>            
+            </tr>
+    <tr class="page-order-table-text">
+        <td>
+            001 Удобрение БИОГУМУС, 10 кг
+        </td>
+        <td>
+            219 руб.
+        </td>
+        <td>
+            229 руб.
+        </td>  
+        <td>
+            239 руб.
+        </td> 
+        <td>
+            249 руб.
+        </td> 
+        <td>
+            259 руб.
+        </td> 
+        <td>
+            269 руб.
+        </td> 
+        <td>
+            279 руб.
+        </td>        
+    </tr>
+    <tr class="page-order-table-text">
+        <td>
+            003 Почвообразователь ТЕРРАГУМУС 10 кг
+        </td>
+        <td>
+            
+        </td>
+        <td>
+            
+        </td>  
+        <td>
+            219 руб.
+        </td> 
+        <td>
+            
+        </td> 
+        <td>
+            
+        </td> 
+        <td>
+            229 руб.
+        </td> 
+        <td>
+            239 руб.
+        </td>        
+    </tr>    
+    </table>
+</div>        
+
+                                   <div class="p4-div-7">                                    
+                                       <p class="page-order-subheader"><b>001</b></p>
+</div>    
+                                    
+                                   <div class="p4-div-8">                                    
+                                       <p class="page-order-subheader-black">Биогумус 10кг</p>
+</div>                                        
+                                   <div class="p4-div-9">                                    
+                                       <p class="page-order-text">Природный почвенный гумус явля-
+ется идеальным удобрением, вно-
+сится в почву в прикорневую лун-
+ку локально при посадке овощных
+и декоративно-цветочных культур,
+а также при выращивании расса-
+ды. Водный раствор биогумуса ис-
+пользуется для замачивания семян
+и полива растений.</p>
+                                       
+                                       <p class="page-order-text-green">Результат – вкусные плоды,
+красивые яркие цветы,
+здоровые растения!</p>
+</div>        
+
+                                    <div class="p4-div-10"><p class="page-order-text-green">Состав биогумуса</p>
+                                        <p class="page-order-text">
+Органическое вещество (с. в.). . . . . . . . . . . . . . .60–70 %<br>
+Гуминовые кислоты . . . . . . . . . . . . . . . . . . . . . . . . 2–10 %<br>
+Фульвовые кислоты. . . . . . . . . . . . . . . . . . . . . . . . . 1–3 %<br>
+PH. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .6,5–7,5<br>
+Общий азот . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . до 3 %<br>
+Водорастворимый калий. . . . . . . . . . . . . . . . . . . 1–2,5 %<br>
+Водорастворимый фосфор. . . . . . . . . . . . . . . . . 1– 2,5 %<br>
+Микрофлора. . . . . . . . . . . . . . . . . . . . . . .до 2*1015 кл / г<br>
+Микроэлементы<br>
+Mg . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .0,4–1,2 %<br>
+Ca. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3–5 %<br>
+Fe . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 250–1200 мг / кг<br>
+Mn . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 250–900 мг / кг</p></div>
+				</div>
+			</div>
+			<div class="five page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_005.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="six page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_006.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="seven page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_007.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="eight page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_008.png" width="400" height="600">
+<!--                                    <h1>Как сделать заказ</h1>
+                                    <a class="product" href="#" data-pname="9020 Арка садовая, 3 дуги" data-pcol="1" data-pid="287" data-size="комплектов">9020 Арка садовая, 3 дуги</a><br>
+                                    <a class="product" href="#" data-pname="31035 Электросушилка «Ветерок»" data-pcol="1" data-pid="725" data-size="штук">31035 Электросушилка «Ветерок»</a><br>
+                                    <a class="product" href="#" data-pname="31033 Автоматическая закаточная машинка «Машенька»" data-pcol="1" data-pid="720" data-size="коробок">31033 Автоматическая закаточная машинка «Машенька»</a><br>
+                                    <a class="product" href="#" data-pname="9052 Жидкость Аква Кем Грин 1,5 л" data-pcol="1" data-pid="460" data-size="пузырьков">9052 Жидкость Аква Кем Грин 1,5 л</a><br>
+                                    <a class="product" href="#" data-pname="31036 Книга Домашнее консервирование и заготовки" data-pcol="1" data-pid="724" data-size="книг">31036 Книга Домашнее консервирование и заготовки</a><br>
+!-->                                    
+				</div>
+			</div>
+			<div class="p9 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_009.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p10 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_010.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p11 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_011.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p12 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_012.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p13 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_013.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p14 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_014.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p15 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_015.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p16 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_016.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p17 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_017.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p18 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_018.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p19 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_019.png" width="400" height="600">
+				</div>
+			</div>
+			<div class="p20 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_020.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p21 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_021.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p22 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_022.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p23 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_023.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p24 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_024.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p25 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_025.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p26 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_026.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p27 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_027.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p28 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_028.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p29 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_029.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p30 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_030.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p31 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_031.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p32 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_032.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p33 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_033.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p34 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_034.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p35 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_035.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p36 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_036.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p37 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_037.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p38 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_038.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p39 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_039.png" width="400" height="600">
+				</div>
+			</div>       
+			<div class="p40 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_040.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p41 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_041.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p42 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_042.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p43 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_043.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p44 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_044.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p45 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_045.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p46 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_046.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p47 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_047.png" width="400" height="600">
+				</div>
+			</div>                    
+			<div class="p48 page">
+				<div class="pageContents">
+                                    <img src="catalog/Image_048.png" width="400" height="600">
+				</div>
+			</div>    
+
+		</div>
+		<span class="control right" >&gt;</span>
+	</div>
+
+    <!--
+<div id="draggable" class="ui-widget-content">
+  <p>Drag me to my target</p>
+</div>
+
+    
+<div id="droppable" class="ui-widget-header">
+  <p>Drop here</p>
+</div>        
+!-->
+    
+    <div id='basket-panel' class="toggler ui-widget-content">
+  <div id="effect" class="ui-widget-content ui-corner-all">
+      <h3 class="ui-widget-header ui-corner-all"><a href="#" id="button" class="ui-state-default ui-corner-all" title="Свернуть корзину"><</a>Корзина</h3>
+    <select name="effects" id="effectTypes" hidden>
+  <option value="blind">Blind</option>
+  <option value="bounce">Bounce</option>
+  <option value="clip">Clip</option>
+  <option value="drop">Drop</option>
+  <option value="explode">Explode</option>
+  <option value="fade">Fade</option>
+  <option value="fold">Fold</option>
+  <option value="highlight">Highlight</option>
+  <option value="puff">Puff</option>
+  <option value="pulsate">Pulsate</option>
+  <option value="scale">Scale</option>
+  <option value="shake">Shake</option>
+  <option value="size">Size</option>
+  <option value="slide">Slide</option>
+  <option value="transfer">Transfer</option>
+</select>
+    <div id="accordion" class="ui-widget-content ui-corner-all">
+  
+        <h3>Заказы</h3>
+        <div><div><button id="OrderBtn">Заказать</button><button id="OrderClearBtn">Отменить</button></div><div id="Order" class="column"></div></div>
+  
+        <h3>Заказано</h3>
+  
+        <div><div><button id="OrderedBtn" hidden="">Подтвердить</button></div><div id="Ordered" class="column"></div></div>
+  <h3>Избранное</h3>
+  
+  <div id="Favorites">
+    <p>
+        Избранные товары:
+    </p>
+    <ul>
+      <li>Земля</li>
+      <li>Удобрение</li>
+      <li>Тяпка</li>
+    </ul>
+    <button onclick="(function(){$(parent).remove();});">-</button>
+  </div>
+  <h3>Параметры</h3>
+  <div id="Settings">
+    <p>
+        <b>Имя:</b>Илья<br>
+        <b>Отчество:</b>Александрович<br>
+        <b>Фамилия:</b>Юхновский<br>
+        <b>Логин:</b>ilya<br>
+        <b>Тел:</b>89027800807<br>
+        <b>Город:</b>Нижний Новгород
+    </p>
+  </div>
+</div>        
+
+  </div>
+</div>
+    
+  <script>
+  $(function() {
+    $( "#accordion" ).accordion({
+      heightStyle: "fill"
+    });
+  });
+  </script>
+    
+	<script src="modernizr-2.6.2.js"></script>
+	<script src="webcam-swiper-0.1.js"></script>
+	<script src="demo.js"></script>
+       
+    <script>
+      $('#ProductClearBtn').click( function(){
+          $(this).parent().parent().remove();
+      });
+  </script>
+  
+  <script>
+  $(function() {
+    $(".product").click(function() {
+        //data-pname="Земля черная" data-pcol="1" data-pid="1" data-size="мешочек"
+            var prod_name=$(this).attr("data-pname");
+            var prod_pcol=$(this).attr("data-pcol");
+            var prod_size=$(this).attr("data-size");
+            var s='<div class="portlet product-portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all">\n\
+                    <div class="portlet-header ui-widget-header ui-corner-all">\n\
+                    <span class="ui-icon ui-icon-minusthick ordered-prod-name"></span>'+prod_name+'</div>\n\
+                    <div class="portlet-content"><p><label for="spinner">'+prod_size+':</label><input id="spinner" name="value" style="width: 50px;" value="'+prod_pcol+'" width="100"/></p>\n\
+                    </div>\n\
+                  </div>';
+            $(s).appendTo("#Order");
+            
+    $( ".column" ).sortable({
+      connectWith: ".column"
+    });
+ 
+    $( ".portlet" ).find( ".portlet-header span" ).remove('span');
+            
+    $( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )
+        .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+        .end()
+      .find( ".portlet-content" );
+ 
+    $( ".portlet-header .ui-icon" ).click(function() {
+      $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+      $( this ).parents( ".portlet:first" ).find( ".portlet-content" ).toggle();
+    });
+ 
+    $( ".column" ).disableSelection();
+    
+    });
+  });      
+  </script> 
+  <script>
+      $('#OrderBtn').click( function(){
+          $('.product-portlet').removeClass('product-portlet').addClass('product-ordered-portlet').replaceAll('#Ordered').end();
+          $('#OrderedBtn').show();
+      });
+  </script>
+  
+  <script>
+      $('#OrderClearBtn').click( function(){
+          $('.product-portlet').remove('.product-portlet');
+      });
+  </script>
+
+  <div id="dialog" title="Basic dialog" hidden="">
+    <p>Подтвердить заказ</p>
+    <form method="post" action = "http://interactivefishing.tv:9080/order">
+        <table id="ordered-list">
+            <td id="dialog-product-name"></td>
+            <td id="dialog-product-col"></td>
+        </table>
+        <div id="buttonDiv">
+            <button type="submit">Отправить</button>
+        </div>
+    </form>
+  </div>
+
+ <script>
+  $('#dialog').open( function() {
+      alert("dialog open");
+     $('#dialog-product-name').empty();
+     $('#dialog-product-col').empty();
+     $('#Ordered div div ordered-prod-name').each(function(){
+         $('<tr>'+ $(this).value() +'</tr>').append('dialog-product-name');
+     });
+
+    $('#Ordered div div #spinner').each(function(){
+         $('<tr>'+ $(this).value() +'</tr>').append('dialog-product-col');
+     });
+  });
+ </script>
+  <script>
+      $('#OrderedBtn').click( function(){
+          
+              $( "#dialog" ).dialog();
+              $('.product-ordered-portlet').remove('.product-ordered-portlet');
+              $(this).hide();
+      });
+  </script>
+  <script src="js/basket.js"></script>
+
+</body>
+</html>

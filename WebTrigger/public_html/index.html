@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+http://api.jquery.com/scroll/
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="jquery-2.0.3.min.js"></script>
+        <script src="jquery-ui.js"></script>
+        
+    </head>
+    <body>
+        <div id="target" style="overflow: scroll; width: 200px; height: 100px;">
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna
+  aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  Duis aute irure dolor in reprehenderit in voluptate velit
+  esse cillum dolore eu fugiat nulla pariatur. Excepteur
+  sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum.
+</div>
+<div id="other">
+  Trigger the handler
+</div>
+        <div id="foo">Test-events</div>
+        <div id="log">Logs:</div>
+        <script>
+            $( window ).resize(function() {
+                $( "#log" ).append( "<div>Width:" + $( window ).width() +" Height:" + $( window ).height() + "</div>" );
+            });
+            
+            $( "#foo" ).on( "click", function() {
+                $( "#foo" ).trigger( "myevent");
+            //alert( $( this ).text() );
+            });
+            $( "#foo" ).on( "myevent", function() {
+            alert( "myevent ->"+ $( this ).text() );
+            });
+            
+            $( "#foo" ).trigger( "click" );
+            
+            $( "#foo" ).on( "custom", function( event, param1, param2 ) {
+                alert( param1 + "\n" + param2 );
+            });
+            
+            $( "#foo").trigger( "custom", [ "Custom", "Event" ] );
+            
+            //------------------------
+            $( "#target" ).scroll(function() {
+  $( "#log" ).append( "<div>Handler for .scroll() called.</div>" );
+});
+
+$( "#other" ).click(function() {
+  $( "#target" ).scroll();
+});
+
+$.when( { testing: 123 } ).done(function( x ) {
+  alert( x.testing ); // Alerts "123"
+});
+        </script>
+        
+    </body>
+</html>

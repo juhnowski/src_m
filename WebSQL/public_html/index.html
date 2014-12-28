@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>БД-админ</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="jquery-2.0.3.min.js"></script>
+        <script src="jquery-ui.js"></script>
+        <link rel="stylesheet" href="db.css" />
+        <meta charset="utf-8">
+
+        <script id="dataTmpl" type="text/x-jquery-tmpl"> 
+            
+        </script>
+        
+        <script>
+            var phreebie={};
+            phreebie.init = function() {
+                /**
+                 * customerDb - URL по которому запрашиваются файлы базы данных в формате json
+                 */
+                phreebie.customerDb = "http://interactivefishing.tv";
+                /**
+                 * customerHost - URL сайта
+                 */
+                phreebie.customerHost = "http://interactivefishing.tv";
+                /**
+                 * customerName - имя организации
+                 */
+                phreebie.customerName = "MasterGraund";
+                /**
+                 * customerShortDescription - аннотация к продукту
+                 */
+                phreebie.customerShortDescription = "Каталог товаров MasterGraund";
+                /**
+                 * Версия продукта, +0.1 при измеении БД и +1.0 при изменении программы
+                 */
+                phreebie.customerVersion = "0.1";
+                /*
+                 * customerDbSize - размер БД 
+                 */
+                phreebie.customerDbSize = 200000;
+                
+                /**
+                 * Пул подключений к БД
+                 */
+                phreebie.db = new Array();
+                phreebie.tbl = new Array();
+            };
+            
+            phreebie.DEBUG = function(str_msg) {
+                phreebie.LOG(str_msg,".msg-DEBUG");
+            };
+            
+            /**
+             * Выводит сообщение в элемент класса status
+             * @returns {undefined}
+             */
+            phreebie.LOG = function(str_msg,class_name) {
+                if (class_name===null) {
+                    $('<a>' + str_msg + '</a>').appendTo(".status");
+                } else {
+                    $('<a class="'+class_name+'">' + str_msg + '</a><br>').appendTo(".status");
+                };
+            };
+            /**
+             * Выводит сообщение об успехе в элемент класса status
+             * @returns {undefined}
+             */
+            phreebie.OK = function(str_msg) {
+                phreebie.LOG(str_msg,"msg-OK");
+            }
+
+            /**
+             * Выводит сообщение об ошибке в элемент класса status
+             * @returns {undefined}
+             */
+            phreebie.ERR = function(str_msg) {
+                phreebie.LOG(str_msg,"msg-ERR");
+            }
+            
+            /**
+             * Получение данных БД doUpdate - bool, флаг опредварительного удаления таблиц
+             * @returns {undefined}
+             */
+            
+            phreebie.openDb = function(doUpdate) {
+                phreebie.db[0] = openDatabase(phreebie.customerName, phreebie.customerVersion, phreebie.customerShortDescription, phreebie.customerDbSize);
+                if (doUpdate) {
+                    phreebie.cleanTable();
+                }
+                if(!phreebie.db[0]){
+                    phreebie.ERR("Нет соединения с БД");
+                } else {
+                    phreebie.OK("Подключение установлено");
+                
+                $.ajax({
+                    url: "metadata.json",
+                    success: function(data,status,jqxhr) {
+                        phreebie.handleResponse(status,data,null,jqxhr);
+                    },
+                    error: function(jqxhr,status,errorMsg) {
+                        phreebie.handleResponse(status,null,errorMsg,jqxhr);
+                    }
+                });
+                }
+            };
+            
+            /**
+             * Функция читает записи в формате JSON
+             * @param {type} data данные в JSON формате
+             * @param {type} callback callback(key,value)
+             * @returns {undefined}             */
+            phreebie.readJSON = function(data,callback) {
+                $.each(data,function(index,value){
+                  $.each(value,function(index1,value1) {
+                      callback(index1,value1);
+                  });
+              });
+            };
+            
+            phreebie.handleResponse = function(status,data,errorMsg,jqxhr) {
+                if(status ==="success") {
+                    var sql_str="";
+                    var table_name="";
+                    var idx = 1;
+                    var fld={};
+                    $.each(data,function(index,value){
+                        fld={}
+                        phreebie.DEBUG("["+index+"]"+value);
+                        $.each(value,function(key,value1) {
+                            fld[key] = value1;
+                            phreebie.DEBUG("_____"+key+":"+value1);
+                        });
+                        
+                        if(fld["field_type"]==="table") {
+                            table_name=fld["table_name"];
+                            if (sql_str.length>0) {
+                                sql_str+=")";
+                                phreebie.LOG("***"+sql_str+"*****************************************************",".msg");
+                                phreebie.db[idx] = openDatabase(phreebie.customerName, phreebie.customerVersion, phreebie.customerShortDescription, phreebie.customerDbSize);
+                                phreebie.db[idx].transaction(function(tx) {
+                                    //TODO: обновления нет, если таблица создана, то заново не пересоздаем
+                                    tx.executeSql("SELECT COUNT(*) FROM " + table_name, [], null, function (tx, error) {
+                                    tx.executeSql(sql_str, [], null, null);
+                                    
+                                    });
+                                });
+                                idx++;
+                            };
+                            sql_str="";
+                        } else {
+                            if(sql_str.length===0) {
+                                sql_str = "CREATE TABLE " + table_name + " (\""+fld["field_name"]+"\" "+fld["field_type"];
+                            } else {
+                                sql_str+=",\""+fld["field_name"]+"\" "+fld["field_type"];
+                            }
+                        }
+                        
+                    });
+                    //нужно выполнить создание последней таблицы
+                                sql_str+=")";
+                                phreebie.LOG(sql_str,".msg");
+                                phreebie.db[idx] = openDatabase(phreebie.customerName, phreebie.customerVersion, phreebie.customerShortDescription, phreebie.customerDbSize);
+                                phreebie.db[idx].transaction(function(tx) {
+                                    //TODO: обновления нет, если таблица создана, то заново не пересоздаем
+                                    tx.executeSql("SELECT COUNT(*) FROM " + table_name, [], null, function (tx, error) {
+                                    tx.executeSql(sql_str, [], null, null);
+                                    });
+                                });                    
+                    
+                } else {
+                    phreebie.ERR('[Получение JSON] Статус:'+status+" ошибка:"+errorMsg);
+                }
+            };
+            
+            /**
+            * Чистим таблицы
+            * @returns {undefined}             
+            * */
+            phreebie.cleanTable = function() {
+                phreebie.db[0].transaction(function(tx) {
+                    tx.executeSql("DROP TABLE Product",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                    tx.executeSql("DROP TABLE Main",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                    tx.executeSql("DROP TABLE Ordered",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                    tx.executeSql("DROP TABLE Order",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                    tx.executeSql("DROP TABLE Favorites",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                    
+                });            
+            };
+            
+            /**
+             * Закачиваем файл с данными по продуктам и создаем таблицу продуктов
+             * @returns {undefined}
+             */
+            phreebie.createProductTable = function() {
+                $.ajax({
+                    url: "mydata.json",
+                    success: function(data,status,jqxhr) {
+                        phreebie.handleProductResponse(status,data,null,jqxhr);
+                    },
+                    error: function(jqxhr,status,errorMsg) {
+                        phreebie.handleProductResponse(status,null,errorMsg,jqxhr);
+                    }
+                });
+            };
+            
+            phreebie.handleProductResponse = function(status,data,errorMsg,jqxhr) {
+                if(status ==="success") {
+                    $.each(data,function(index,value){
+                        var sql_fields="";
+                        var sql_values="";
+                        var v=new Array();
+                        var idx=0;
+                        var sf="";
+                        
+                        $.each(value,function(key,value1) {
+                            if (value1!="") {
+                                if ($.isNumeric(value1)) {
+                                    //v[idx]=Number(value1);
+                                    sf=value1;
+                                } else {
+                                    //v[idx]=value1;
+                                    sf='"'+value1+'"';
+                                }
+                                if(sql_fields.length===0) {
+                                    sql_fields="INSERT INTO Product ("+"\""+key+"\"";
+                                    sql_values="values("+sf;
+                                    
+                                } else {
+                                    sql_fields+=","+"\""+key+"\"";
+                                    sql_values += ","+sf;
+                                }
+                            }
+                        });
+                        
+                        phreebie.db[0].transaction(function(tx) {
+                            var s = sql_fields+") "+sql_values+")";
+                            tx.executeSql(s,[],null, function (tx, error){phreebie.ERR(error.message+" sql:"+s)});//function (result) {phreebie.OK(result);}
+                        });
+                        
+                    });
+                    
+                    phreebie.OK("Выполнено!");
+                } else {
+                    phreebie.ERR('[Получение JSON-данных для таблицы Продукты] Статус:'+status+" ошибка:"+errorMsg);
+                }   
+            }
+            
+
+            phreebie.addToFavoriteTable = function(productId) {
+                var res="";
+                
+                if(productId>0) {
+                    alert(productId);
+                 phreebie.db[0].transaction(function(tx) {
+                      tx.executeSql('INSERT INTO Favorites ('+productId+')', [],function (result) {res='Продукт'+ productId +'добавлен в избранное'} , function (tx, error) {
+                          res=error.message;
+                      });
+                 });
+                } else {
+                    res="Непредвиденная ошибка: код продукта < 0";
+                }
+                alert(res);
+                return res;
+            };
+        </script>
+        
+        <script>
+/*            
+            var db;
+            
+            $(function() {
+                db = openDatabase("ToDo", "0.1", "A list of to do items.", 200000);
+                if(!db){
+                    $('<a class="msg-ERR">Failed to connect to database.').appendTo(".status");
+                } else {
+                    $('<a class="msg-OK">Connected!</a>').appendTo(".status");
+                }
+                
+                db.transaction(function(tx) {
+                    tx.executeSql("SELECT COUNT(*) FROM ToDo", [], null, function (tx, error) {
+                    tx.executeSql("CREATE TABLE ToDo (id REAL UNIQUE, label TEXT, timestamp REAL)", [], null, null);
+                    });});
+                
+                db.transaction(function(tx) {
+                    tx.executeSql("INSERT INTO ToDo (label, timestamp) values(?, ?)", ["Тестовая запись", new Date().getTime()], null, null);
+                    });
+            });
+*/            
+        </script>
+        
+    </head>
+    <body>
+        <div class="status">
+            <div class="workarea">
+                <div><button id="db_exec">Тест</button></div>
+                <div><button id="db_add_favorites">Добавить в Избранное</button></div>
+                <div><p id="dbres"></p></div>
+            </div>
+        <script>
+            $("#db_exec").click(function() {
+                phreebie.init();
+                //tx.executeSql("DROP TABLE Product",[],function (result){phreebie.OK("[Удаление таблиц] OK "+result);}, function (tx, error){phreebie.ERR("[Удаление таблиц]"+error.message);});
+                
+                phreebie.db[0] = openDatabase("Product", phreebie.customerVersion, phreebie.customerShortDescription, phreebie.customerDbSize);
+                //phreebie.openDb(true);
+                phreebie.createProductTable();
+            });
+            
+            $("#db_add_favorites").click(function() {
+                var r="";
+                r=phreebie.addToFavoriteTable(1);
+                alert(r);
+            });
+   
+        </script>
+   </body>
+</html>
